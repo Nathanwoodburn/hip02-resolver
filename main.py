@@ -43,9 +43,8 @@ def jsonlookup(path):
         return make_response({"success":False,"error":"Invalid domain"}, 200, {'Content-Type': 'application/json'})
 
     TLSA = hip02.TLSA_check(HSD_IP,HSD_PORT,path)
-    if not TLSA:
+    if TLSA != True:
         return make_response({"success":False,"error":TLSA}, 200, {'Content-Type': 'application/json'})
-    
     token = "HNS"
     if 'token' in request.args:
         token = request.args['token'].upper()
@@ -63,7 +62,7 @@ def lookup(path):
         return make_response("Invalid domain", 200, {'Content-Type': 'text/plain'})
 
     TLSA = hip02.TLSA_check(HSD_IP,HSD_PORT,path)
-    if not TLSA:
+    if TLSA != True:
         return make_response(TLSA, 200, {'Content-Type': 'text/plain'})
     token = "HNS"
     if 'token' in request.args:
