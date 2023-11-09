@@ -3,6 +3,7 @@ import os
 import dotenv
 import requests
 import hip02
+import re
 
 
 app = Flask(__name__)
@@ -15,6 +16,10 @@ if os.getenv('HSD_IP'):
     HSD_IP = os.getenv('HSD_IP')
 if os.getenv('HSD_PORT'):
     HSD_PORT = os.getenv('HSD_PORT')
+
+def valid_domain(domain):
+    regex = "^((xn--)?[a-z0-9]+\.)*((xn--)?[a-z0-9]+)$"
+    return re.match(regex, domain)
 
 
 @app.route('/')
@@ -34,6 +39,9 @@ def favicon():
 
 @app.route('/<path>.json')
 def jsonlookup(path):
+    if not valid_domain(path):
+        return make_response({"success":False,"error":"Invalid domain"}, 200, {'Content-Type': 'application/json'})
+
     TLSA = hip02.TLSA_check(HSD_IP,HSD_PORT,path)
     if not TLSA:
         return make_response({"success":False,"error":TLSA}, 200, {'Content-Type': 'application/json'})
@@ -51,6 +59,9 @@ def jsonlookup(path):
 
 @app.route('/<path>')
 def lookup(path):
+    if not valid_domain(path):
+        return make_response("Invalid domain", 200, {'Content-Type': 'text/plain'})
+
     TLSA = hip02.TLSA_check(HSD_IP,HSD_PORT,path)
     if not TLSA:
         return make_response(TLSA, 200, {'Content-Type': 'text/plain'})
