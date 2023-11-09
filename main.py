@@ -68,7 +68,11 @@ def lookup(path):
     token = "HNS"
     if 'token' in request.args:
         token = request.args['token'].upper()
-    return make_response(hip02.resolve(HSD_IP, HSD_PORT, path,token), 200, {'Content-Type': 'text/plain'})
+
+    hip2 = hip02.resolve(HSD_IP, HSD_PORT, path,token)
+    if not hip2:
+        return make_response("", 200, {'Content-Type': 'text/plain'})
+    return make_response(hip2, 200, {'Content-Type': 'text/plain'})
 
 # 404 catch all
 @app.errorhandler(404)
