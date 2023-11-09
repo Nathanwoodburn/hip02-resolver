@@ -9,7 +9,7 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 COPY . /app
 
 # Install curl
-RUN apk add --update curl
+RUN apk add --update curl openssl
 
 ENTRYPOINT ["python3"]
 CMD ["server.py"]
